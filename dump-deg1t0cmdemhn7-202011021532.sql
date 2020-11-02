@@ -5,7 +5,7 @@
 -- Dumped from database version 12.4 (Ubuntu 12.4-1.pgdg16.04+1)
 -- Dumped by pg_dump version 13.0
 
--- Started on 2020-11-02 10:07:10
+-- Started on 2020-11-02 15:32:26
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -29,7 +29,7 @@ CREATE SCHEMA public;
 ALTER SCHEMA public OWNER TO icfjttdivtiins;
 
 --
--- TOC entry 3881 (class 0 OID 0)
+-- TOC entry 3879 (class 0 OID 0)
 -- Dependencies: 3
 -- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: icfjttdivtiins
 --
@@ -131,7 +131,7 @@ CREATE TABLE public.vehicle (
 ALTER TABLE public.vehicle OWNER TO icfjttdivtiins;
 
 --
--- TOC entry 3873 (class 0 OID 8393287)
+-- TOC entry 3871 (class 0 OID 8393287)
 -- Dependencies: 205
 -- Data for Name: administrator; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
@@ -141,7 +141,7 @@ COPY public.administrator (user_id) FROM stdin;
 
 
 --
--- TOC entry 3870 (class 0 OID 8392162)
+-- TOC entry 3868 (class 0 OID 8392162)
 -- Dependencies: 202
 -- Data for Name: app_user; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
@@ -153,7 +153,7 @@ ana.anic@email.com	123312321	person	60	00234225892
 
 
 --
--- TOC entry 3872 (class 0 OID 8392192)
+-- TOC entry 3870 (class 0 OID 8392192)
 -- Dependencies: 204
 -- Data for Name: company; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
@@ -163,7 +163,7 @@ COPY public.company (name, headquarter_adress, user_id) FROM stdin;
 
 
 --
--- TOC entry 3871 (class 0 OID 8392177)
+-- TOC entry 3869 (class 0 OID 8392177)
 -- Dependencies: 203
 -- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
@@ -174,7 +174,7 @@ Ivo	Ivić	55	\N
 
 
 --
--- TOC entry 3874 (class 0 OID 8393307)
+-- TOC entry 3872 (class 0 OID 8393307)
 -- Dependencies: 206
 -- Data for Name: vehicle; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
@@ -187,7 +187,7 @@ ZG2234A	55
 
 
 --
--- TOC entry 3884 (class 0 OID 0)
+-- TOC entry 3882 (class 0 OID 0)
 -- Dependencies: 207
 -- Name: app_user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: icfjttdivtiins
 --
@@ -196,7 +196,7 @@ SELECT pg_catalog.setval('public.app_user_user_id_seq', 87, true);
 
 
 --
--- TOC entry 3737 (class 2606 OID 8442111)
+-- TOC entry 3735 (class 2606 OID 8442111)
 -- Name: administrator administrator_un; Type: CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -223,16 +223,7 @@ ALTER TABLE ONLY public.app_user
 
 
 --
--- TOC entry 3729 (class 2606 OID 8443005)
--- Name: app_user app_user_password_hash_un; Type: CONSTRAINT; Schema: public; Owner: icfjttdivtiins
---
-
-ALTER TABLE ONLY public.app_user
-    ADD CONSTRAINT app_user_password_hash_un UNIQUE (password_hash);
-
-
---
--- TOC entry 3731 (class 2606 OID 8442051)
+-- TOC entry 3729 (class 2606 OID 8442051)
 -- Name: app_user app_user_pk; Type: CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -241,7 +232,7 @@ ALTER TABLE ONLY public.app_user
 
 
 --
--- TOC entry 3735 (class 2606 OID 8442063)
+-- TOC entry 3733 (class 2606 OID 8442063)
 -- Name: company company_un; Type: CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -250,7 +241,7 @@ ALTER TABLE ONLY public.company
 
 
 --
--- TOC entry 3733 (class 2606 OID 8442072)
+-- TOC entry 3731 (class 2606 OID 8442072)
 -- Name: person person_un; Type: CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -259,7 +250,7 @@ ALTER TABLE ONLY public.person
 
 
 --
--- TOC entry 3739 (class 2606 OID 8443026)
+-- TOC entry 3737 (class 2606 OID 8443026)
 -- Name: vehicle vehicle_un; Type: CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -268,7 +259,7 @@ ALTER TABLE ONLY public.vehicle
 
 
 --
--- TOC entry 3742 (class 2606 OID 8442112)
+-- TOC entry 3740 (class 2606 OID 8442112)
 -- Name: administrator administrator_fk; Type: FK CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -277,7 +268,7 @@ ALTER TABLE ONLY public.administrator
 
 
 --
--- TOC entry 3741 (class 2606 OID 8442066)
+-- TOC entry 3739 (class 2606 OID 8442066)
 -- Name: company company_fk; Type: FK CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -286,7 +277,7 @@ ALTER TABLE ONLY public.company
 
 
 --
--- TOC entry 3740 (class 2606 OID 8442073)
+-- TOC entry 3738 (class 2606 OID 8442073)
 -- Name: person person_fk; Type: FK CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -295,7 +286,7 @@ ALTER TABLE ONLY public.person
 
 
 --
--- TOC entry 3743 (class 2606 OID 8442098)
+-- TOC entry 3741 (class 2606 OID 8442098)
 -- Name: vehicle vehicle_fk; Type: FK CONSTRAINT; Schema: public; Owner: icfjttdivtiins
 --
 
@@ -304,7 +295,7 @@ ALTER TABLE ONLY public.vehicle
 
 
 --
--- TOC entry 3882 (class 0 OID 0)
+-- TOC entry 3880 (class 0 OID 0)
 -- Dependencies: 3
 -- Name: SCHEMA public; Type: ACL; Schema: -; Owner: icfjttdivtiins
 --
@@ -316,7 +307,7 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
--- TOC entry 3883 (class 0 OID 0)
+-- TOC entry 3881 (class 0 OID 0)
 -- Dependencies: 643
 -- Name: LANGUAGE plpgsql; Type: ACL; Schema: -; Owner: postgres
 --
@@ -324,7 +315,7 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 GRANT ALL ON LANGUAGE plpgsql TO icfjttdivtiins;
 
 
--- Completed on 2020-11-02 10:07:16
+-- Completed on 2020-11-02 15:32:31
 
 --
 -- PostgreSQL database dump complete
