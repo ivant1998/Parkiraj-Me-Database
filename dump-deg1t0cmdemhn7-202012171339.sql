@@ -2,10 +2,10 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 12.4 (Ubuntu 12.4-1.pgdg16.04+1)
+-- Dumped from database version 12.5 (Ubuntu 12.5-1.pgdg16.04+1)
 -- Dumped by pg_dump version 13.0
 
--- Started on 2020-11-11 20:52:53
+-- Started on 2020-12-17 13:39:32
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -60,7 +60,7 @@ ALTER TABLE public.administrator OWNER TO icfjttdivtiins;
 
 CREATE TABLE public.app_user (
     email character varying(255) NOT NULL,
-    password_hash character varying(128) NOT NULL,
+    password_hash character varying(60) NOT NULL,
     role character(1) NOT NULL,
     oib character varying(11),
     user_uuid character varying(32) NOT NULL,
@@ -94,10 +94,12 @@ ALTER TABLE public.company OWNER TO icfjttdivtiins;
 CREATE TABLE public.parking_object (
     object_uuid character varying(32) NOT NULL,
     company_uuid character varying(32) NOT NULL,
-    free_slots smallint NOT NULL,
     "30_minute_price" smallint NOT NULL,
     address character varying(127) NOT NULL,
     object_name character varying(127) NOT NULL,
+    capacity smallint NOT NULL,
+    latitude numeric(8,6) NOT NULL,
+    longitude numeric(9,6) NOT NULL,
     CONSTRAINT parking_object_check CHECK (((object_uuid)::text ~ '^[a-f0-9]{32}$'::text))
 );
 
@@ -113,7 +115,8 @@ CREATE TABLE public.person (
     first_name character varying(35) NOT NULL,
     last_name character varying(35) NOT NULL,
     credit_card_number character varying(16) NOT NULL,
-    person_uuid character varying(32) NOT NULL
+    person_uuid character varying(32) NOT NULL,
+    credit_card_expiration_date date NOT NULL
 );
 
 
@@ -132,6 +135,7 @@ CREATE TABLE public.reservation (
     end_time timestamp(0) without time zone NOT NULL,
     days_in_week bit(7) NOT NULL,
     expiration_date date,
+    is_active boolean NOT NULL,
     CONSTRAINT reservation_check CHECK ((((date_part('epoch'::text, ((end_time - start_time) / (60)::double precision)))::integer % 30) = 0))
 );
 
@@ -159,9 +163,6 @@ ALTER TABLE public.vehicle OWNER TO icfjttdivtiins;
 --
 
 COPY public.administrator (administrator_uuid) FROM stdin;
-44444444444444444444444444444444
-77777777777777777777777777777777
-88888888888888888888888888888888
 \.
 
 
@@ -172,16 +173,22 @@ COPY public.administrator (administrator_uuid) FROM stdin;
 --
 
 COPY public.app_user (email, password_hash, role, oib, user_uuid) FROM stdin;
-ana.anic@fer.hr	12312312322	p	00000000002	11111111111111111111111111111111
-ivo.ivic@fer.hr	12321233232	p	00000000001	22222222222222222222222222222222
-firma1@gmail.com	5454454	c	00000000003	33333333333333333333333333333333
-admin.adminic@fer.hr	5455444134	a	\N	44444444444444444444444444444444
-tin.tinic@fer.hr	12332132131213	p	00000000004	55555555555555555555555555555555
-stipe.stipic@fer.hr	4545565654	p	00000000005	66666666666666666666666666666666
-admin2@fer.hr	35t55555443	a	\N	77777777777777777777777777777777
-admin4@fer.hr	12323	a	\N	88888888888888888888888888888888
-firma2@gmail.com	45742446462	c	00000000006	99999999999999999999999999999999
-firma3@fer.hr	343434232	c	12312312322	aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+tvrtka1@gmail.com	$2a$10$7hvXL5Fthune5/xxsgwUIuoKqrEJTWlSCFX4BxqGlcdPDGalXaci.	c	00000000000	5a3aede429154305adf0f240addb856f
+tvrtka2@gmail.com	$2a$10$t4SOyX014sluGKAARJMrPe80qE3t7fXtK2vEkbgmEKK3HiIXSSsOa	c	00000000001	34852bf73c354e6b8c3337f9928e26d8
+tvrtka3@gmail.com	$2a$10$W1i1CIoHS4ore2ALhCav2e94vwLDa55PjMLMwFUxsGwKOIJlG5uim	c	00000000002	fb87c948210f4a7fad4eca1cb349d979
+tvrtka4@gmail.com	$2a$10$C1S2xCFAHMFjJ4EJutp20ewUiiTKc98Y3ZD4oRhNy15GhCldx32TK	c	00000000003	a76d10feccf74fe09897e8092fd246fb
+tvrtka5@gmail.com	$2a$10$sBfJgLEIekh/kpk/rbL5auAc5uL.gqWQaEo0tQlxPcza4H601ks1K	c	00000000004	27ecb174118d4a9299fab0bb46c636da
+tvrtka6@gmail.com	$2a$10$NJeQqtXC92xP9fOCOyEKqu2FwgG0Ad0QyD/hM9JJxKjDpmasnYdXq	c	00000000005	65a1ea4040de4b6d90e2e0c7344fb5b6
+ivo.ivic@gmail.com	$2a$10$BoN2U4aqoa.1ZZUAxBPJn.AXaNjhKR1D.Rglae9RVC0ztT.00Anw2	p	00000000006	dd0cc2ac37134a0fa463421c587ddcfe
+ana.anic@gmail.com	$2a$10$0uKzJ3qiU2zrAb1WAozVl.qhho4FJMrhqJqSAe.h6gLHQPPo4Bzl2	p	00000000007	544df2da00a64823a694d1a0e3a37dd1
+luka.lukic@gmail.com	$2a$10$nHC8hj6KfGK29TWpJXMVFuA04S5ogPaPi9Zpxjz8TAXE51lzpcXrG	p	00000000008	35067e78f6c64586b2ee37d04ac5b0b3
+petra.petric@gmail.com	$2a$10$TCVObr6bZztn1r4przsy0O6C2v2QWie/Enoitw8aiIBKBy7xb4z0a	p	00000000009	66596491aa40439f8d9e4de3b78167df
+karlo.karlic@gmail.com	$2a$10$tdBjr6l9fmZ4hJR61Z/5Huw0/l/k96weuaH64gIW02ZAuz48B.KPy	p	00000000010	8acc4d9a7b43434c970c4fc3a34d18af
+ftest1@test.com	$2a$10$7o3xj8vBgk8qhisA24k.LO/RVisDost7jcPoSfEnRJGRch2HVUlL6	p	11112222001	835660db75f24a3aa8533e10c4497329
+ftest2@test.com	$2a$10$J4qa9N.x8aP8boo8mkCAbuBR9RFHfNWbbT6Tu0Q8mWIHuEdpc66F2	c	11112222002	7ced8f43994d405194775affb6f49c75
+ime.prezime@fer.hr	$2a$10$8acPe0BQRisFZQBk7O3IN.kH3LrBDZeg31WOrSQHAWR0hyJQqXGCK	p	12345678998	9e3015acf41e43318c712811789f4608
+nekiMail@mail.com	$2a$10$sV/g7lT8dSx08.Inm/0e3OiTwsQnwZL2dIOKO.2zB47VV344YY0uq	c	01234567891	badf45d90c074311bc8d8a9997789a82
+abcd@gmail.com	$2a$10$XxtpJQ/FxpvdHEvLiHLcm./uPIvT6.07QoElKipdYQi6LNMxP7PQq	p	22211133369	fbc657671dee42789cc24aef9801f2f5
 \.
 
 
@@ -192,9 +199,14 @@ firma3@fer.hr	343434232	c	12312312322	aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 --
 
 COPY public.company (name, headquarter_address, company_uuid) FROM stdin;
-firma1	adresa1	33333333333333333333333333333333
-firma2	adresa2	99999999999999999999999999999999
-firma3	adresa3	aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+tvrtka1	Lijeva ulica 13	5a3aede429154305adf0f240addb856f
+tvrtka2	Slatka ulica 2	34852bf73c354e6b8c3337f9928e26d8
+tvrtka3	Gornja ulica 24	fb87c948210f4a7fad4eca1cb349d979
+tvrtka4	Suha ulica 32	a76d10feccf74fe09897e8092fd246fb
+tvrtka5	Drvena ulica 21	27ecb174118d4a9299fab0bb46c636da
+tvrtka6	Ozbilja ulica 17	65a1ea4040de4b6d90e2e0c7344fb5b6
+Test	Žuta ulica 7	7ced8f43994d405194775affb6f49c75
+imeTvrtke	Bijela ulica 29	badf45d90c074311bc8d8a9997789a82
 \.
 
 
@@ -204,12 +216,25 @@ firma3	adresa3	aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 -- Data for Name: parking_object; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
 
-COPY public.parking_object (object_uuid, company_uuid, free_slots, "30_minute_price", address, object_name) FROM stdin;
-cacb24560123dcab8912ffe6789eeff5	33333333333333333333333333333333	12	400	Deveta Ulica 4	Parkiralište D23
-fff3efabcdefabcdefaaaaafabcdef22	33333333333333333333333333333333	75	600	Osma Ulica 22	Parkiralište AAA
-aaaa56789123dcab8912ffe6789eeff5	99999999999999999999999999999999	20	300	Treća Ulica 8	Parkiralište CCC
-bbb45aa8912345678912ffe6789eeff5	99999999999999999999999999999999	30	400	Prva Ulica 2 	Parkliralište ABC
-0035fbacd323dcab8912ffe6789eeff5	33333333333333333333333333333333	25	700	Prva Ulica 33	Parkiralište DDD
+COPY public.parking_object (object_uuid, company_uuid, "30_minute_price", address, object_name, capacity, latitude, longitude) FROM stdin;
+f09aec7ab42d449286097ab358e4c82d	fb87c948210f4a7fad4eca1cb349d979	650	Ogromna ulica 51	Helo parking	200	45.818123	16.002456
+1ff07001acf64f07a6c29a66f687cd68	fb87c948210f4a7fad4eca1cb349d979	250	Smiješna ulica 12	Garaža oj	10	45.840214	16.093472
+4e66448df6ce45579d5328a179739d17	fb87c948210f4a7fad4eca1cb349d979	350	Modra ulica 3	IF garaža	80	45.834516	15.836923
+6cd6ec6fb7a947579496679d62045032	fb87c948210f4a7fad4eca1cb349d979	400	Kriva ulica 8	Žnj parkiralište	77	45.755567	15.950345
+5fba2de429154305adf0f240ab3095fd	5a3aede429154305adf0f240addb856f	400	Zelena ulica 1	Parkiralište Z	15	45.754444	15.820000
+ae7ddbbd18e04c63844595bbd710ae61	5a3aede429154305adf0f240addb856f	300	Plava ulica 13	Parkiralište Ooo	45	45.763443	16.140000
+82bf84edcb614b549d4cd7efdd4d7f51	5a3aede429154305adf0f240addb856f	350	Žuta ulica 2	Parkiralište EEE	28	45.804961	15.834569
+3277984aaf834582a1a07f6ffc0bcc48	65a1ea4040de4b6d90e2e0c7344fb5b6	300	Osma ulica 33	EK parkiralište	30	45.816034	15.880531
+c4b5cc01c43e423d9e0d7d9c7cbf218d	65a1ea4040de4b6d90e2e0c7344fb5b6	400	Dugačka ulica 10	ZU garaža	100	45.772056	15.993456
+13637517bff842b4b622680197701aa1	65a1ea4040de4b6d90e2e0c7344fb5b6	250	Kratka ulica 6	FR garaža	55	45.791034	16.046313
+0daf05c1e5c2454ab92e1e66426944f8	65a1ea4040de4b6d90e2e0c7344fb5b6	450	Crna ulica 15	NN parkiralište	44	45.832052	15.990134
+8834cafa0b904865942a5dea137fa899	65a1ea4040de4b6d90e2e0c7344fb5b6	300	Roza ulica 22	Parking abc	17	45.850023	16.102456
+f5d10093a1bc42aaa572866f53c8f015	34852bf73c354e6b8c3337f9928e26d8	300	Sretna ulica 26	PPParking	100	45.810456	16.124505
+53388f3866c64db5865ae778d35d5507	34852bf73c354e6b8c3337f9928e26d8	500	Tužna ulica 21	Haha Parking	60	45.802456	16.078572
+aba49d54ebd141fe99e4ef894cf0affb	34852bf73c354e6b8c3337f9928e26d8	550	Siva ulica 16	123 Parking	37	45.751256	16.012469
+1f3c11d061a2484eab748f5e88d7aa4b	a76d10feccf74fe09897e8092fd246fb	500	Plinska ulica 34	OZN parking	55	45.815601	15.998402
+6ae611adc6964fb5bdcce6a0eb40b3d9	badf45d90c074311bc8d8a9997789a82	300	Vodena ulica 10	Prvi parking	50	45.930002	16.140022
+43f71bb3b4b94cc8a0465feb7c12e39c	badf45d90c074311bc8d8a9997789a82	200	Plava ulica 4	Drugi parking	50	45.991112	16.130000
 \.
 
 
@@ -219,11 +244,15 @@ bbb45aa8912345678912ffe6789eeff5	99999999999999999999999999999999	30	400	Prva Ul
 -- Data for Name: person; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
 
-COPY public.person (first_name, last_name, credit_card_number, person_uuid) FROM stdin;
-Ana	Anić	2222333344445555	11111111111111111111111111111111
-Ivo	Ivić	1111222233334444	22222222222222222222222222222222
-Tin	Tinić	1212333332323232	55555555555555555555555555555555
-Stipe	Stipić	3333222211110000	66666666666666666666666666666666
+COPY public.person (first_name, last_name, credit_card_number, person_uuid, credit_card_expiration_date) FROM stdin;
+Ivo	Ivić	1234123412341234	dd0cc2ac37134a0fa463421c587ddcfe	2021-06-15
+Ana	Anić	0011001122223333	544df2da00a64823a694d1a0e3a37dd1	2021-07-14
+Luka	Lukić	2222222222222222	35067e78f6c64586b2ee37d04ac5b0b3	2021-01-06
+Petra	Petrić	9090909090909090	66596491aa40439f8d9e4de3b78167df	2022-06-22
+Karlo	Karlić	6666666666666666	8acc4d9a7b43434c970c4fc3a34d18af	2023-11-20
+Test	Test	1234123412341234	835660db75f24a3aa8533e10c4497329	2023-04-14
+Ime	Prezime	123456789	9e3015acf41e43318c712811789f4608	2023-02-15
+Avv	dj	1231231231235555	fbc657671dee42789cc24aef9801f2f5	2021-10-10
 \.
 
 
@@ -233,15 +262,7 @@ Stipe	Stipić	3333222211110000	66666666666666666666666666666666
 -- Data for Name: reservation; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
 
-COPY public.reservation (start_time, registration_number, person_uuid, object_uuid, end_time, days_in_week, expiration_date) FROM stdin;
-2020-09-03 20:11:00	ČK123CC	11111111111111111111111111111111	bbb45aa8912345678912ffe6789eeff5	2020-09-03 22:11:00	0000000	\N
-2020-10-11 10:10:00	ČK123CC	11111111111111111111111111111111	fff3efabcdefabcdefaaaaafabcdef22	2020-10-11 10:40:00	1110001	\N
-2020-10-11 10:10:00	ČK123CC	22222222222222222222222222222222	fff3efabcdefabcdefaaaaafabcdef22	2020-10-11 10:40:00	1111111	\N
-2020-10-11 10:10:00	ČK123CC	22222222222222222222222222222222	aaaa56789123dcab8912ffe6789eeff5	2020-10-11 10:40:00	0101011	\N
-2020-10-11 10:10:00	ČK123CC	22222222222222222222222222222222	bbb45aa8912345678912ffe6789eeff5	2020-10-11 10:40:00	0000000	\N
-2020-10-11 10:10:00	ZG1111AZ	22222222222222222222222222222222	bbb45aa8912345678912ffe6789eeff5	2020-10-11 10:40:00	1111111	\N
-2020-10-11 10:10:00	ZG1111AZ	22222222222222222222222222222222	aaaa56789123dcab8912ffe6789eeff5	2020-10-11 10:40:00	1111000	\N
-2020-10-11 10:10:00	ČK123CC	11111111111111111111111111111111	aaaa56789123dcab8912ffe6789eeff5	2020-10-11 10:40:00	0101011	\N
+COPY public.reservation (start_time, registration_number, person_uuid, object_uuid, end_time, days_in_week, expiration_date, is_active) FROM stdin;
 \.
 
 
@@ -252,10 +273,18 @@ COPY public.reservation (start_time, registration_number, person_uuid, object_uu
 --
 
 COPY public.vehicle (registration_number, person_uuid) FROM stdin;
-ČK123CC	11111111111111111111111111111111
-ZG1111AZ	11111111111111111111111111111111
-ČK123CC	22222222222222222222222222222222
-ZG1111AZ	22222222222222222222222222222222
+ČK123CC	dd0cc2ac37134a0fa463421c587ddcfe
+ZG1234OE	dd0cc2ac37134a0fa463421c587ddcfe
+ČK123CC	544df2da00a64823a694d1a0e3a37dd1
+ST365AC	35067e78f6c64586b2ee37d04ac5b0b3
+DU222TZ	35067e78f6c64586b2ee37d04ac5b0b3
+ZD824JK	66596491aa40439f8d9e4de3b78167df
+RI221UL	8acc4d9a7b43434c970c4fc3a34d18af
+RI1282CC	8acc4d9a7b43434c970c4fc3a34d18af
+ZD2222RT	8acc4d9a7b43434c970c4fc3a34d18af
+ZG1111AA	835660db75f24a3aa8533e10c4497329
+ZG098ZZ	9e3015acf41e43318c712811789f4608
+Zd444Ac	fbc657671dee42789cc24aef9801f2f5
 \.
 
 
@@ -432,7 +461,7 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 GRANT ALL ON LANGUAGE plpgsql TO icfjttdivtiins;
 
 
--- Completed on 2020-11-11 20:53:03
+-- Completed on 2020-12-17 13:39:38
 
 --
 -- PostgreSQL database dump complete
