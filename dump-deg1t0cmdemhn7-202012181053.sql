@@ -5,7 +5,7 @@
 -- Dumped from database version 12.5 (Ubuntu 12.5-1.pgdg16.04+1)
 -- Dumped by pg_dump version 13.0
 
--- Started on 2020-12-17 13:39:32
+-- Started on 2020-12-18 10:53:36
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -100,6 +100,7 @@ CREATE TABLE public.parking_object (
     capacity smallint NOT NULL,
     latitude numeric(8,6) NOT NULL,
     longitude numeric(9,6) NOT NULL,
+    free_slots integer NOT NULL,
     CONSTRAINT parking_object_check CHECK (((object_uuid)::text ~ '^[a-f0-9]{32}$'::text))
 );
 
@@ -135,7 +136,6 @@ CREATE TABLE public.reservation (
     end_time timestamp(0) without time zone NOT NULL,
     days_in_week bit(7) NOT NULL,
     expiration_date date,
-    is_active boolean NOT NULL,
     CONSTRAINT reservation_check CHECK ((((date_part('epoch'::text, ((end_time - start_time) / (60)::double precision)))::integer % 30) = 0))
 );
 
@@ -189,6 +189,8 @@ ftest2@test.com	$2a$10$J4qa9N.x8aP8boo8mkCAbuBR9RFHfNWbbT6Tu0Q8mWIHuEdpc66F2	c	1
 ime.prezime@fer.hr	$2a$10$8acPe0BQRisFZQBk7O3IN.kH3LrBDZeg31WOrSQHAWR0hyJQqXGCK	p	12345678998	9e3015acf41e43318c712811789f4608
 nekiMail@mail.com	$2a$10$sV/g7lT8dSx08.Inm/0e3OiTwsQnwZL2dIOKO.2zB47VV344YY0uq	c	01234567891	badf45d90c074311bc8d8a9997789a82
 abcd@gmail.com	$2a$10$XxtpJQ/FxpvdHEvLiHLcm./uPIvT6.07QoElKipdYQi6LNMxP7PQq	p	22211133369	fbc657671dee42789cc24aef9801f2f5
+expiry.date.test1@mail.com	$2a$10$mT6ZhVtb58llh9zGTya7lehbGIF2f4jF.ftuCXQdMeO05Q4pY/NFm	p	12345678912	86cb67d5b3ba4f9e971c539e7dc2e683
+expiry.date.test2@mail.com	$2a$10$.6n55QCYpEctp83TtOVIKe5hXg2wfRf/td0WiTuV1ZpyI9ZcB1xni	p	11223344556	ef2f6b3412594ed2b0af9758a10e1355
 \.
 
 
@@ -216,25 +218,25 @@ imeTvrtke	Bijela ulica 29	badf45d90c074311bc8d8a9997789a82
 -- Data for Name: parking_object; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
 
-COPY public.parking_object (object_uuid, company_uuid, "30_minute_price", address, object_name, capacity, latitude, longitude) FROM stdin;
-f09aec7ab42d449286097ab358e4c82d	fb87c948210f4a7fad4eca1cb349d979	650	Ogromna ulica 51	Helo parking	200	45.818123	16.002456
-1ff07001acf64f07a6c29a66f687cd68	fb87c948210f4a7fad4eca1cb349d979	250	Smiješna ulica 12	Garaža oj	10	45.840214	16.093472
-4e66448df6ce45579d5328a179739d17	fb87c948210f4a7fad4eca1cb349d979	350	Modra ulica 3	IF garaža	80	45.834516	15.836923
-6cd6ec6fb7a947579496679d62045032	fb87c948210f4a7fad4eca1cb349d979	400	Kriva ulica 8	Žnj parkiralište	77	45.755567	15.950345
-5fba2de429154305adf0f240ab3095fd	5a3aede429154305adf0f240addb856f	400	Zelena ulica 1	Parkiralište Z	15	45.754444	15.820000
-ae7ddbbd18e04c63844595bbd710ae61	5a3aede429154305adf0f240addb856f	300	Plava ulica 13	Parkiralište Ooo	45	45.763443	16.140000
-82bf84edcb614b549d4cd7efdd4d7f51	5a3aede429154305adf0f240addb856f	350	Žuta ulica 2	Parkiralište EEE	28	45.804961	15.834569
-3277984aaf834582a1a07f6ffc0bcc48	65a1ea4040de4b6d90e2e0c7344fb5b6	300	Osma ulica 33	EK parkiralište	30	45.816034	15.880531
-c4b5cc01c43e423d9e0d7d9c7cbf218d	65a1ea4040de4b6d90e2e0c7344fb5b6	400	Dugačka ulica 10	ZU garaža	100	45.772056	15.993456
-13637517bff842b4b622680197701aa1	65a1ea4040de4b6d90e2e0c7344fb5b6	250	Kratka ulica 6	FR garaža	55	45.791034	16.046313
-0daf05c1e5c2454ab92e1e66426944f8	65a1ea4040de4b6d90e2e0c7344fb5b6	450	Crna ulica 15	NN parkiralište	44	45.832052	15.990134
-8834cafa0b904865942a5dea137fa899	65a1ea4040de4b6d90e2e0c7344fb5b6	300	Roza ulica 22	Parking abc	17	45.850023	16.102456
-f5d10093a1bc42aaa572866f53c8f015	34852bf73c354e6b8c3337f9928e26d8	300	Sretna ulica 26	PPParking	100	45.810456	16.124505
-53388f3866c64db5865ae778d35d5507	34852bf73c354e6b8c3337f9928e26d8	500	Tužna ulica 21	Haha Parking	60	45.802456	16.078572
-aba49d54ebd141fe99e4ef894cf0affb	34852bf73c354e6b8c3337f9928e26d8	550	Siva ulica 16	123 Parking	37	45.751256	16.012469
-1f3c11d061a2484eab748f5e88d7aa4b	a76d10feccf74fe09897e8092fd246fb	500	Plinska ulica 34	OZN parking	55	45.815601	15.998402
-6ae611adc6964fb5bdcce6a0eb40b3d9	badf45d90c074311bc8d8a9997789a82	300	Vodena ulica 10	Prvi parking	50	45.930002	16.140022
-43f71bb3b4b94cc8a0465feb7c12e39c	badf45d90c074311bc8d8a9997789a82	200	Plava ulica 4	Drugi parking	50	45.991112	16.130000
+COPY public.parking_object (object_uuid, company_uuid, "30_minute_price", address, object_name, capacity, latitude, longitude, free_slots) FROM stdin;
+c4b5cc01c43e423d9e0d7d9c7cbf218d	65a1ea4040de4b6d90e2e0c7344fb5b6	400	Dugačka ulica 10	ZU garaža	100	45.772056	15.993456	66
+13637517bff842b4b622680197701aa1	65a1ea4040de4b6d90e2e0c7344fb5b6	250	Kratka ulica 6	FR garaža	55	45.791034	16.046313	43
+0daf05c1e5c2454ab92e1e66426944f8	65a1ea4040de4b6d90e2e0c7344fb5b6	450	Crna ulica 15	NN parkiralište	44	45.832052	15.990134	12
+8834cafa0b904865942a5dea137fa899	65a1ea4040de4b6d90e2e0c7344fb5b6	300	Roza ulica 22	Parking abc	17	45.850023	16.102456	2
+f5d10093a1bc42aaa572866f53c8f015	34852bf73c354e6b8c3337f9928e26d8	300	Sretna ulica 26	PPParking	100	45.810456	16.124505	2
+53388f3866c64db5865ae778d35d5507	34852bf73c354e6b8c3337f9928e26d8	500	Tužna ulica 21	Haha Parking	60	45.802456	16.078572	1
+aba49d54ebd141fe99e4ef894cf0affb	34852bf73c354e6b8c3337f9928e26d8	550	Siva ulica 16	123 Parking	37	45.751256	16.012469	22
+1f3c11d061a2484eab748f5e88d7aa4b	a76d10feccf74fe09897e8092fd246fb	500	Plinska ulica 34	OZN parking	55	45.815601	15.998402	13
+6ae611adc6964fb5bdcce6a0eb40b3d9	badf45d90c074311bc8d8a9997789a82	300	Vodena ulica 10	Prvi parking	50	45.930002	16.140022	10
+43f71bb3b4b94cc8a0465feb7c12e39c	badf45d90c074311bc8d8a9997789a82	200	Plava ulica 4	Drugi parking	50	45.991112	16.130000	0
+f09aec7ab42d449286097ab358e4c82d	fb87c948210f4a7fad4eca1cb349d979	650	Ogromna ulica 51	Helo parking	200	45.818123	16.002456	50
+1ff07001acf64f07a6c29a66f687cd68	fb87c948210f4a7fad4eca1cb349d979	250	Smiješna ulica 12	Garaža oj	10	45.840214	16.093472	4
+4e66448df6ce45579d5328a179739d17	fb87c948210f4a7fad4eca1cb349d979	350	Modra ulica 3	IF garaža	80	45.834516	15.836923	14
+6cd6ec6fb7a947579496679d62045032	fb87c948210f4a7fad4eca1cb349d979	400	Kriva ulica 8	Žnj parkiralište	77	45.755567	15.950345	0
+5fba2de429154305adf0f240ab3095fd	5a3aede429154305adf0f240addb856f	400	Zelena ulica 1	Parkiralište Z	15	45.754444	15.820000	12
+ae7ddbbd18e04c63844595bbd710ae61	5a3aede429154305adf0f240addb856f	300	Plava ulica 13	Parkiralište Ooo	45	45.763443	16.140000	15
+82bf84edcb614b549d4cd7efdd4d7f51	5a3aede429154305adf0f240addb856f	350	Žuta ulica 2	Parkiralište EEE	28	45.804961	15.834569	0
+3277984aaf834582a1a07f6ffc0bcc48	65a1ea4040de4b6d90e2e0c7344fb5b6	300	Osma ulica 33	EK parkiralište	30	45.816034	15.880531	0
 \.
 
 
@@ -253,6 +255,8 @@ Karlo	Karlić	6666666666666666	8acc4d9a7b43434c970c4fc3a34d18af	2023-11-20
 Test	Test	1234123412341234	835660db75f24a3aa8533e10c4497329	2023-04-14
 Ime	Prezime	123456789	9e3015acf41e43318c712811789f4608	2023-02-15
 Avv	dj	1231231231235555	fbc657671dee42789cc24aef9801f2f5	2021-10-10
+ExpiryDateTest1	ExpiryDateTest1	1111222233334444	86cb67d5b3ba4f9e971c539e7dc2e683	2021-05-01
+ExpiryDateTest1	ExpiryDateTest1	1111222233334444	ef2f6b3412594ed2b0af9758a10e1355	2021-05-01
 \.
 
 
@@ -262,7 +266,7 @@ Avv	dj	1231231231235555	fbc657671dee42789cc24aef9801f2f5	2021-10-10
 -- Data for Name: reservation; Type: TABLE DATA; Schema: public; Owner: icfjttdivtiins
 --
 
-COPY public.reservation (start_time, registration_number, person_uuid, object_uuid, end_time, days_in_week, expiration_date, is_active) FROM stdin;
+COPY public.reservation (start_time, registration_number, person_uuid, object_uuid, end_time, days_in_week, expiration_date) FROM stdin;
 \.
 
 
@@ -285,6 +289,8 @@ ZD2222RT	8acc4d9a7b43434c970c4fc3a34d18af
 ZG1111AA	835660db75f24a3aa8533e10c4497329
 ZG098ZZ	9e3015acf41e43318c712811789f4608
 Zd444Ac	fbc657671dee42789cc24aef9801f2f5
+ZG1234AB	86cb67d5b3ba4f9e971c539e7dc2e683
+ZG1234AB	ef2f6b3412594ed2b0af9758a10e1355
 \.
 
 
@@ -461,7 +467,7 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 GRANT ALL ON LANGUAGE plpgsql TO icfjttdivtiins;
 
 
--- Completed on 2020-12-17 13:39:38
+-- Completed on 2020-12-18 10:53:43
 
 --
 -- PostgreSQL database dump complete
